@@ -1,4 +1,4 @@
-#ARDUINO-CLI + PYTHON
+# ARDUINO-CLI + PYTHON
 
 Este documento aborda a integração do Arduino CLI com Python, destacando os principais comandos do Arduino CLI que foram utilizados para gerenciar núcleos, placas e bibliotecas. Abaixo, estão os comandos que foram integrados com a API Python.
 
