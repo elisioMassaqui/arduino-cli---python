@@ -1,8 +1,8 @@
-## Detecção de Placas Arduino
+# Detecção de Placas Arduino
 
 Este projeto utiliza o `arduino-cli` para detectar placas Arduino conectadas ao computador. O script verifica as portas seriais disponíveis e identifica as placas Arduino Uno e Mega 2560.
 
-### Como Funciona
+## Como Funciona
 
 1. **Execução do Comando de Detecção:**
    O script usa o comando `arduino-cli board list` para listar as placas conectadas e suas portas seriais.
@@ -11,44 +11,59 @@ Este projeto utiliza o `arduino-cli` para detectar placas Arduino conectadas ao 
    O script analisa a saída para identificar se as placas conectadas são Arduino Uno ou Mega 2560, com base na identificação do chip (`ATmega328P` para Uno e `ATmega2560` para Mega 2560).
 
 3. **Retorno dos Resultados:**
-   A função `detect_arduino_port()` retorna um dicionário onde a chave é a porta COM e o valor é o Fully Qualified Board Name (FQBN) correspondente, por exemplo, `arduino:avr:uno` para Arduino Uno e `arduino:avr:mega` para Mega 2560.
+   A função `detect_arduino_port()` retorna o nome da porta COM detectada. Se uma placa Arduino Uno ou Mega 2560 for encontrada, o nome da porta é exibido no final.
 
-### Código de Exemplo
+## Código de Exemplo
 
 ```python
 import subprocess
 
 def detect_arduino_port():
-    """Detecta a porta onde a Arduino Uno ou Mega 2560 está conectada."""
+    """Detecta a porta onde a Arduino Uno ou Mega 2560 está conectada e exibe o nome da porta no final."""
     try:
+        print("Executando comando para listar portas...")
         result = subprocess.run(['arduino-cli', 'board', 'list'], capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW)
+        
         if result.returncode == 0:
-            ports = {}
+            print("Comando executado com sucesso. Analisando portas...")
+            detected_port = None
+            
             for line in result.stdout.splitlines():
-                if 'ATmega328P' in line:  # Usado pela Uno
-                    port = line.split()[0]  # Porta COM para Uno
-                    ports[port] = 'arduino:avr:uno'
-                elif 'ATmega2560' in line:  # Usado pela Mega 2560
-                    port = line.split()[0]  # Porta COM para Mega 2560
-                    ports[port] = 'arduino:avr:mega'
-            return ports if ports else None
-        return None
+                print(f"Linha capturada: {line}")
+                if 'ATmega328P' in line or 'ATmega2560' in line:  # Verifica se a linha contém informações da Uno ou Mega
+                    detected_port = line.split()[0]  # Armazena a porta detectada
+                    break  # Para após encontrar a primeira placa
+            
+            if detected_port:
+                print(f"Porta detectada: {detected_port}")
+            else:
+                print("Nenhuma placa Arduino Uno ou Mega 2560 foi detectada.")
+        else:
+            print("Falha ao executar o comando.")
     except FileNotFoundError:
-        return None
+        print("arduino-cli não encontrado. Verifique se está instalado e no PATH.")
     except Exception as e:
         print(f"Erro ao detectar porta: {e}")
-        return None
+    finally:
+        input("Pressione Enter para sair...")  # Mantém a janela aberta para ver as mensagens de erro
+
+# Chama a função para testar
+detect_arduino_port()
 ```
 
-### Uso
-Chame a função detect_arduino_port() para obter uma lista de portas e placas detectadas. Se a função retornar um dicionário vazio, nenhuma placa compatível foi encontrada.
+Uso
+Chame a função detect_arduino_port() para obter o nome da porta detectada. Se a função encontrar uma placa Arduino Uno ou Mega 2560, ela exibirá o nome da porta no final.
 
 ```python
-ports = detect_arduino_port()
-if ports:
-    print("Placas detectadas:", ports)
-else:
-    print("Nenhuma placa Arduino detectada.")
+detect_arduino_port()
 ```
+Se a função não detectar nenhuma placa compatível, a mensagem "Nenhuma placa Arduino Uno ou Mega 2560 foi detectada." será exibida.
 
-Esse trecho de Markdown fornece uma visão geral clara sobre a detecção de placas Arduino, incluindo o funcionamento básico, o código de exemplo e como utilizar a função no seu projeto.
+### Explicação do Markdown:
+
+- **Título e Descrição:** Descreve o propósito do projeto e como ele funciona.
+- **Como Funciona:** Explica o processo de detecção e identificação das placas.
+- **Código de Exemplo:** Inclui o código atualizado que detecta e exibe o nome da porta.
+- **Uso:** Mostra como usar a função e o que esperar como resultado.
+
+Adapte o conteúdo conforme necessário para se ajustar ao estilo e às necessidades específicas do seu projeto.
