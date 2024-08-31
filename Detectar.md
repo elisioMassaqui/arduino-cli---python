@@ -50,5 +50,5 @@ Uso
 Chame a função detect_arduino_port() para obter o nome da porta detectada. Se a função encontrar uma placa Arduino
 
 ```python
-detect_arduino_port()
+detect_any_port()
 ```
