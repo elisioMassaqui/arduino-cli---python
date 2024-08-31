@@ -18,8 +18,8 @@ Este projeto utiliza o `arduino-cli` para detectar placas Arduino conectadas ao 
 ```python
 import subprocess
 
-def detect_arduino_port():
-    """Detecta a porta onde a Arduino Uno ou Mega 2560 está conectada e exibe o nome da porta no final."""
+def detect_any_port():
+    """Detecta qualquer porta onde um dispositivo está conectado e exibe o nome da porta no final."""
     try:
         print("Executando comando para listar portas...")
         result = subprocess.run(['arduino-cli', 'board', 'list'], capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW)
@@ -30,14 +30,14 @@ def detect_arduino_port():
             
             for line in result.stdout.splitlines():
                 print(f"Linha capturada: {line}")
-                if 'ATmega328P' in line or 'ATmega2560' in line:  # Verifica se a linha contém informações da Uno ou Mega
+                if 'COM' in line or '/dev' in line:  # Verifica se a linha contém uma porta COM ou /dev
                     detected_port = line.split()[0]  # Armazena a porta detectada
-                    break  # Para após encontrar a primeira placa
+                    break  # Para após encontrar a primeira porta
             
             if detected_port:
                 print(f"Porta detectada: {detected_port}")
             else:
-                print("Nenhuma placa Arduino Uno ou Mega 2560 foi detectada.")
+                print("Nenhuma porta foi detectada.")
         else:
             print("Falha ao executar o comando.")
     except FileNotFoundError:
@@ -48,7 +48,8 @@ def detect_arduino_port():
         input("Pressione Enter para sair...")  # Mantém a janela aberta para ver as mensagens de erro
 
 # Chama a função para testar
-detect_arduino_port()
+detect_any_port()
+
 ```
 
 Uso
